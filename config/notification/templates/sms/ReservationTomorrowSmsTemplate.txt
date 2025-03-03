@@ -1,0 +1,13 @@
+Cześć [(${name})]!
+Uprzejmie przypominam o jutrzejszej wizycie w XYZ na godzinę [(${startTime})]
+Poniżej kilka szczegółów:
+
+Numer rezerwacji [(${number})]
+Usługa         [(${treatmentType})]
+Czas trwania   [(${duration})]
+Cena           [(${price})]zł
+
+Jeśli ta wiadomość została otrzymana przypadkowo proszę skontaktuj się ze mną.
+Do zobaczenia!
+Pozdrawiam
+XYZ

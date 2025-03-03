@@ -1,0 +1,7 @@
+Cześć [(${name})]!
+Twoja rezerwacja XYZ w terminie [(${startDate})] na godzinę [(${startTime})] została anulowana.
+Jeśli ta wiadomość została otrzymana przypadkowo proszę skontaktuj się ze mną.
+Do zobaczenia!
+
+Pozdrawiam
+XYZ

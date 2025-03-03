@@ -1,0 +1,52 @@
+[http.routers]
+[http.routers.ReservationRouter]
+rule = "PathPrefix(`/reservation/api`) || PathPrefix(`/appointment/api`) || PathPrefix(`/treatment/api`)"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["ratelimit"]
+
+[http.routers.KeycloakRouter]
+rule = "PathPrefix(`/realms/lashroom`)"
+entryPoints = ["web"]
+service = "keycloak"
+middlewares = ["ratelimit"]
+
+[http.routers.DashboardRouter]
+rule = "(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+service = "api@internal"
+middlewares = ["auth"]
+
+[http.middlewares]
+[http.middlewares.ratelimit.rateLimit]
+average = 10
+burst = 20
+
+[http.middlewares.auth.basicAuth]
+users = ["admin:$2y$10$DOhFW0WPz3tz83xCUvGpWuMCSnu2A3FKJYkZBFkMq6zkboRYqgf7e"]
+
+[http.services]
+[http.services.reservation.loadBalancer]
+[[http.services.reservation.loadBalancer.servers]]
+url = "http://reservation:8080"
+[http.services.reservation.loadBalancer.healthCheck]
+path = "/actuator/health/custom"
+interval = "10s"
+timeout = "3s"
+
+[http.services.notification.loadBalancer]
+[[http.services.notification.loadBalancer.servers]]
+url = "http://notification:8081"
+[http.services.notification.loadBalancer.healthCheck]
+path = "/actuator/health/custom"
+interval = "10s"
+timeout = "3s"
+
+[http.services.keycloak.loadBalancer]
+[[http.services.keycloak.loadBalancer.servers]]
+url = "http://keycloak:8080"
+[http.services.keycloak.loadBalancer.healthCheck]
+hostname = "keycloak"
+port = "9000"
+path = "health"
+interval = "10s"
+timeout = "3s"

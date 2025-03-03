@@ -1,0 +1,14 @@
+Cześć [(${name})]!
+Twoja rezerwacja wizyty w XYZ została potwierdzona!
+Poniżej kilka szczegółów:
+
+Numer rezerwacji [(${number})]
+Termin           [(${startDate})] godzina [(${startTime})]
+Usługa           [(${treatmentType})]
+Czas trwania     [(${duration})]
+Cena             [(${price})]zł
+
+Jeśli ta wiadomość została otrzymana przypadkowo proszę skontaktuj się ze mną.
+Do zobaczenia!
+Pozdrawiam
+XYZ

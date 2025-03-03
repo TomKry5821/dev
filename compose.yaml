@@ -1,0 +1,104 @@
+services:
+  reservation:
+    depends_on:
+      - database
+      - rabbit
+    image: tk582186/reservation:latest
+    container_name: reservation
+    env_file:
+      - ./config/reservation/.env
+    volumes:
+      - ./logs/reservation:/reservation/logs
+    networks:
+      - dev-net
+
+  notification:
+    depends_on:
+      - rabbit
+    image: tk582186/notification:latest
+    container_name: notification
+    env_file:
+      - ./config/notification/.env
+    volumes:
+      - ./logs/notification:/notification/logs
+      - ./config/notification/templates:/opt/config/templates
+    networks:
+      - dev-net
+
+  keycloak:
+    depends_on:
+      - database
+    container_name: keycloak
+    image: bitnami/keycloak:26.1.0
+    ports:
+      - '8030:8080'
+    env_file:
+      - ./config/keycloak/.env
+    volumes:
+      - ./logs/keycloak:/opt/bitnami/keycloak/data/log
+    networks:
+      - dev-net
+
+  database:
+    container_name: database
+    image: postgres:17.2
+    ports:
+      - "5432:5432"
+    env_file:
+      - config/database/.env
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - dev-net
+
+  rabbit:
+    container_name: rabbit
+    image: bitnami/rabbitmq:4.0.6
+    ports:
+      - "15672:15672"
+    env_file:
+      - ./config/rabbit/.env
+    volumes:
+      - ./logs/rabbit:/opt/bitnami/rabbitmq/var/lib/rabbitmq
+    networks:
+      - dev-net
+
+  proxy:
+    image: traefik:v3.3.2
+    container_name: proxy
+    ports:
+      - "8085:8085"
+      - "8086:8086"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik/basic:/etc/traefik
+      - ./config/traefik/config:/config
+      - ./logs/traefik:/var/log
+    networks:
+      - dev-net
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    privileged: true
+    ports:
+      - "8084:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - ./config/cadvisor/auth.htpasswd:/admin.htpasswd
+    environment:
+      - HTTP_AUTH_FILE=/auth.htpasswd
+      - HTTP_AUTH_REALM=localhost
+    command:
+      - "--http_auth_file=/auth.htpasswd"
+      - "--http_auth_realm=localhost"
+    networks:
+      - dev-net
+networks:
+  dev-net:
+    driver: bridge

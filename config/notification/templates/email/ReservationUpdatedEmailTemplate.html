@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Potwierdzenie aktualizacji rezerwacji</title>
+</head>
+<body>
+<p>Cześć <span th:text="${name}">[Imię]</span>!</p>
+<p>Twoja rezerwacja wizyty w XYZ została zaktualizowana!</p>
+<p>Poniżej kilka szczegółów:</p>
+
+<table>
+    <tr>
+        <td>Numer rezerwacji</td>
+        <td><span th:text="${numer}">[Kod Rezerwacji]</span></td>
+    </tr>
+    <tr>
+        <td>Termin</td>
+        <td><span th:text="${startDate}">[Data]</span> godzina <span th:text="${startTime}">[Godzina]</span></td>
+    </tr>
+    <tr>
+        <td>Usługa</td>
+        <td><span th:text="${treatmentType}">[Usługa]</span></td>
+    </tr>
+    <tr>
+        <td>Czas trwania</td>
+        <td><span th:text="${duration}">[Czas Trwania]</span></td>
+    </tr>
+    <tr>
+        <td>Cena</td>
+        <td><span th:text="${price}">[Cena]</span>zł</td>
+    </tr>
+</table>
+
+<p>Jeśli ta wiadomość została otrzymana przypadkowo proszę skontaktuj się ze mną.</p>
+<p>Do zobaczenia!</p>
+<p>Pozdrawiam</p>
+<p>XYZ</p>
+</body>
+</html>

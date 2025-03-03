@@ -6,9 +6,9 @@ services:
     image: tk582186/reservation:latest
     container_name: reservation
     env_file:
-      - ./config/reservation/.env
+      - ./env/reservation/.env
     volumes:
-      - ./logs/reservation:/reservation/logs
+      - ./logs/reservation:/reservation/logs:rw
     networks:
       - dev-net
 
@@ -18,10 +18,10 @@ services:
     image: tk582186/notification:latest
     container_name: notification
     env_file:
-      - ./config/notification/.env
+      - ./env/notification/.env
     volumes:
-      - ./logs/notification:/notification/logs
-      - ./config/notification/templates:/opt/config/templates
+      - ./logs/notification:/notification/logs:rw
+      - ./config/notification/templates:/opt/config/templates:ro
     networks:
       - dev-net
 
@@ -33,9 +33,9 @@ services:
     ports:
       - '8030:8080'
     env_file:
-      - ./config/keycloak/.env
+      - ./env/keycloak/.env
     volumes:
-      - ./logs/keycloak:/opt/bitnami/keycloak/data/log
+      - ./logs/keycloak:/opt/bitnami/keycloak/data/log:rw
     networks:
       - dev-net
 
@@ -45,9 +45,9 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - config/database/.env
+      - ./env/database/.env
     volumes:
-      - ./db-data:/var/lib/postgresql/data
+      - ./db-data:/bitnami/postgresql:rw
     networks:
       - dev-net
 
@@ -57,9 +57,9 @@ services:
     ports:
       - "15672:15672"
     env_file:
-      - ./config/rabbit/.env
+      - ./env/rabbit/.env
     volumes:
-      - ./logs/rabbit:/opt/bitnami/rabbitmq/var/lib/rabbitmq
+      - ./logs/rabbit:/opt/bitnami/rabbitmq/var/lib/rabbitmq:rw
     networks:
       - dev-net
 
@@ -72,9 +72,9 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/traefik/basic:/etc/traefik
-      - ./config/traefik/config:/config
-      - ./logs/traefik:/var/log
+      - ./config/traefik/basic:/etc/traefik:ro
+      - ./config/traefik/config:/config:ro
+      - ./logs/traefik:/var/log:rw
     networks:
       - dev-net
 
@@ -90,12 +90,12 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
-      - ./config/cadvisor/auth.htpasswd:/admin.htpasswd
+      - ./config/cadvisor/admin.htpasswd:/admin.htpasswd:ro
     environment:
       - HTTP_AUTH_FILE=/auth.htpasswd
       - HTTP_AUTH_REALM=localhost
     command:
-      - "--http_auth_file=/auth.htpasswd"
+      - "--http_auth_file=/admin.htpasswd"
       - "--http_auth_realm=localhost"
     networks:
       - dev-net

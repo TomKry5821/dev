@@ -1,0 +1,7 @@
+.idea/
+db-data/
+logs/
+
+*.env
+*.htpasswd
+*.iml

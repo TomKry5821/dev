@@ -1,15 +1,45 @@
 [http.routers]
-[http.routers.ReservationRouter]
-rule = "PathPrefix(`/reservation/api`) || PathPrefix(`/appointment/api`) || PathPrefix(`/treatment/api`)"
+[http.routers.AppointmentPublicRouter]
+rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`GET`))"
 entryPoints = ["web"]
 service = "reservation"
-middlewares = ["ratelimit"]
+middlewares = ["rate-limit"]
+
+[http.routers.AppointmentSecureRouter]
+rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`POST`) || (PathPrefix(`/appointment/api/appointments/`) && (Method(`PUT`) || Method(`DELETE`))))"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["rate-limit", "jwt-auth"]
+
+[http.routers.ReservationPublicRouter]
+rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`POST`) || (PathPrefix(`/reservation/api/reservations/`) && (Method(`GET`) || Method(`PUT`) || Method(`DELETE`))))"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["rate-limit"]
+
+[http.routers.ReservationSecureRouter]
+rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`GET`) || PathPrefix(`/reservation/api/reservations/`) && Method(`PATCH`)) || PathPrefix(`/reservation/api/employee/reservations`) && (Method(`POST`) || Method(`PUT`))"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["rate-limit", "jwt-auth"]
+
+[http.routers.TreatmentPublicRouter]
+rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`GET`))"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["rate-limit"]
+
+[http.routers.TreatmentSecureRouter]
+rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`POST`) || (PathPrefix(`/treatment/api/treatments/`) && (Method(`PUT`) || Method(`DELETE`))))"
+entryPoints = ["web"]
+service = "reservation"
+middlewares = ["rate-limit", "jwt-auth"]
 
 [http.routers.AuthRouter]
 rule = "PathPrefix(`/realms/dev`)"
 entryPoints = ["web"]
 service = "keycloak"
-middlewares = ["ratelimit"]
+middlewares = ["rate-limit"]
 
 [http.routers.DashboardRouter]
 rule = "(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
@@ -17,9 +47,13 @@ service = "api@internal"
 middlewares = ["auth"]
 
 [http.middlewares]
-[http.middlewares.ratelimit.rateLimit]
+[http.middlewares.rate-limit.rateLimit]
 average = 10
 burst = 20
+
+[http.middlewares.jwt-auth.forwardAuth]
+address = "http://keycloak:8080/realms/dev/protocol/openid-connect/userinfo"
+trustForwardHeader = false
 
 [http.middlewares.auth.basicAuth]
 users = ["admin:$2y$10$DOhFW0WPz3tz83xCUvGpWuMCSnu2A3FKJYkZBFkMq6zkboRYqgf7e"]

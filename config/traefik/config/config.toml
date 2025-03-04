@@ -5,8 +5,8 @@ entryPoints = ["web"]
 service = "reservation"
 middlewares = ["ratelimit"]
 
-[http.routers.KeycloakRouter]
-rule = "PathPrefix(`/realms/lashroom`)"
+[http.routers.AuthRouter]
+rule = "PathPrefix(`/realms/dev`)"
 entryPoints = ["web"]
 service = "keycloak"
 middlewares = ["ratelimit"]

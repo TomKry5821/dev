@@ -1,5 +1,6 @@
 services:
   reservation:
+    restart: unless-stopped
     depends_on:
       - database
       - rabbit
@@ -13,6 +14,7 @@ services:
       - dev-net
 
   notification:
+    restart: unless-stopped
     depends_on:
       - rabbit
     image: tk582186/notification:latest
@@ -26,6 +28,7 @@ services:
       - dev-net
 
   keycloak:
+    restart: unless-stopped
     depends_on:
       - database
     container_name: keycloak
@@ -40,6 +43,7 @@ services:
       - dev-net
 
   database:
+    restart: unless-stopped
     container_name: database
     image: postgres:17.2
     ports:
@@ -52,6 +56,7 @@ services:
       - dev-net
 
   rabbit:
+    restart: unless-stopped
     container_name: rabbit
     image: bitnami/rabbitmq:4.0.6
     ports:
@@ -64,6 +69,7 @@ services:
       - dev-net
 
   proxy:
+    restart: unless-stopped
     image: traefik:v3.3.2
     container_name: proxy
     ports:
@@ -79,6 +85,7 @@ services:
       - dev-net
 
   cadvisor:
+    restart: unless-stopped
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
     privileged: true
@@ -90,7 +97,7 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
-      - ./config/cadvisor/admin.htpasswd:/admin.htpasswd:ro
+      - ./config/cadvisor/admin.htpasswd:/admin.htpasswd
     environment:
       - HTTP_AUTH_FILE=/auth.htpasswd
       - HTTP_AUTH_REALM=localhost

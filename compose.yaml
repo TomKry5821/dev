@@ -80,6 +80,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/traefik/basic:/etc/traefik:ro
       - ./config/traefik/config:/config:ro
+      - ./config/traefik/certs:/etc/certs:ro
       - ./logs/traefik:/var/log:rw
     networks:
       - dev-net

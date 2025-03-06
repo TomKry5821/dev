@@ -1,45 +1,52 @@
 [http.routers]
 [http.routers.AppointmentPublicRouter]
 rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`GET`))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
+[http.routers.AppointmentPublicRouter.tls]
 
 [http.routers.AppointmentSecureRouter]
 rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`POST`) || (PathPrefix(`/appointment/api/appointments/`) && (Method(`PUT`) || Method(`DELETE`))))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
+[http.routers.AppointmentSecureRouter.tls]
 
 [http.routers.ReservationPublicRouter]
 rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`POST`) || (PathPrefix(`/reservation/api/reservations/`) && (Method(`GET`) || Method(`PUT`) || Method(`DELETE`))))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
+[http.routers.ReservationPublicRouter.tls]
 
 [http.routers.ReservationSecureRouter]
 rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`GET`) || PathPrefix(`/reservation/api/reservations/`) && Method(`PATCH`)) || PathPrefix(`/reservation/api/employee/reservations`) && (Method(`POST`) || Method(`PUT`))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
+[http.routers.ReservationSecureRouter.tls]
 
 [http.routers.TreatmentPublicRouter]
 rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`GET`))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
+[http.routers.TreatmentPublicRouter.tls]
 
 [http.routers.TreatmentSecureRouter]
 rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`POST`) || (PathPrefix(`/treatment/api/treatments/`) && (Method(`PUT`) || Method(`DELETE`))))"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
+[http.routers.TreatmentSecureRouter.tls]
 
 [http.routers.AuthRouter]
 rule = "PathPrefix(`/realms/dev`)"
-entryPoints = ["web"]
+entryPoints = ["websecure"]
 service = "keycloak"
 middlewares = ["rate-limit"]
+[http.routers.AuthRouter.tls]
 
 [http.routers.DashboardRouter]
 rule = "(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
@@ -84,3 +91,7 @@ port = "9000"
 path = "health"
 interval = "10s"
 timeout = "3s"
+
+[[tls.certificates]]
+certFile = "/etc/certs/localhost.pem"
+keyFile = "/etc/certs/localhost-key.pem"

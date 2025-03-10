@@ -100,9 +100,11 @@ services:
     environment:
       - HTTP_AUTH_FILE=/auth.htpasswd
       - HTTP_AUTH_REALM=localhost
+      - CADVISOR_HEALTHCHECK_URL=http://localhost:8080/healthz
     command:
       - "--http_auth_file=/admin.htpasswd"
       - "--http_auth_realm=localhost"
+      - "--url_base_prefix=/cadvisor"
     networks:
       - dev-net
 networks:

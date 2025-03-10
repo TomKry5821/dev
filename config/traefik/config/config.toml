@@ -71,6 +71,13 @@ entryPoints = ["websecure"]
 [http.routers.DashboardRouter.tls]
 options = "TLSOptions"
 
+[http.routers.MonitoringRouter]
+rule = "PathPrefix(`/cadvisor`)"
+service = "cadvisor"
+entryPoints = ["websecure"]
+[http.routers.MonitoringRouter.tls]
+options = "TLSOptions"
+
 [http.middlewares]
 [http.middlewares.rate-limit.rateLimit]
 average = 10
@@ -107,5 +114,13 @@ url = "http://keycloak:8080"
 hostname = "keycloak"
 port = "9000"
 path = "health"
+interval = "10s"
+timeout = "3s"
+
+[http.services.cadvisor.loadBalancer]
+[[http.services.cadvisor.loadBalancer.servers]]
+url = "http://cadvisor:8080"
+[http.services.cadvisor.loadBalancer.healthCheck]
+path = "/cadvisor/healthz"
 interval = "10s"
 timeout = "3s"

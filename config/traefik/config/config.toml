@@ -1,3 +1,11 @@
+[[tls.certificates]]
+certFile = "/etc/certs/localhost.pem"
+keyFile = "/etc/certs/localhost-key.pem"
+
+[tls.options]
+[tls.options.TLSOptions]
+minVersion = "VersionTLS12"
+
 [http.routers]
 [http.routers.AppointmentPublicRouter]
 rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`GET`))"
@@ -5,6 +13,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
 [http.routers.AppointmentPublicRouter.tls]
+options = "TLSOptions"
 
 [http.routers.AppointmentSecureRouter]
 rule = "Host(`localhost`) && (Path(`/appointment/api/appointments`) && Method(`POST`) || (PathPrefix(`/appointment/api/appointments/`) && (Method(`PUT`) || Method(`DELETE`))))"
@@ -12,6 +21,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
 [http.routers.AppointmentSecureRouter.tls]
+options = "TLSOptions"
 
 [http.routers.ReservationPublicRouter]
 rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`POST`) || (PathPrefix(`/reservation/api/reservations/`) && (Method(`GET`) || Method(`PUT`) || Method(`DELETE`))))"
@@ -19,6 +29,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
 [http.routers.ReservationPublicRouter.tls]
+options = "TLSOptions"
 
 [http.routers.ReservationSecureRouter]
 rule = "Host(`localhost`) && (Path(`/reservation/api/reservations`) && Method(`GET`) || PathPrefix(`/reservation/api/reservations/`) && Method(`PATCH`)) || PathPrefix(`/reservation/api/employee/reservations`) && (Method(`POST`) || Method(`PUT`))"
@@ -26,6 +37,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
 [http.routers.ReservationSecureRouter.tls]
+options = "TLSOptions"
 
 [http.routers.TreatmentPublicRouter]
 rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`GET`))"
@@ -33,6 +45,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit"]
 [http.routers.TreatmentPublicRouter.tls]
+options = "TLSOptions"
 
 [http.routers.TreatmentSecureRouter]
 rule = "Host(`localhost`) && (Path(`/treatment/api/treatments`) && Method(`POST`) || (PathPrefix(`/treatment/api/treatments/`) && (Method(`PUT`) || Method(`DELETE`))))"
@@ -40,6 +53,7 @@ entryPoints = ["websecure"]
 service = "reservation"
 middlewares = ["rate-limit", "jwt-auth"]
 [http.routers.TreatmentSecureRouter.tls]
+options = "TLSOptions"
 
 [http.routers.AuthRouter]
 rule = "PathPrefix(`/realms/dev`)"
@@ -47,11 +61,15 @@ entryPoints = ["websecure"]
 service = "keycloak"
 middlewares = ["rate-limit"]
 [http.routers.AuthRouter.tls]
+options = "TLSOptions"
 
 [http.routers.DashboardRouter]
 rule = "(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
 service = "api@internal"
 middlewares = ["auth"]
+entryPoints = ["websecure"]
+[http.routers.DashboardRouter.tls]
+options = "TLSOptions"
 
 [http.middlewares]
 [http.middlewares.rate-limit.rateLimit]
@@ -91,7 +109,3 @@ port = "9000"
 path = "health"
 interval = "10s"
 timeout = "3s"
-
-[[tls.certificates]]
-certFile = "/etc/certs/localhost.pem"
-keyFile = "/etc/certs/localhost-key.pem"

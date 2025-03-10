@@ -1,18 +1,7 @@
 [entryPoints]
-[entryPoints.web]
-address = ":8085"
-reusePort = false
-
-[entryPoints.traefik]
-address = ":8086"
-reusePort = false
-
 [entryPoints.websecure]
 address = ":443"
 reusePort = false
-
-[certificatesResolvers.myresolver]
-selfSigned = true
 
 [api]
 dashboard = true

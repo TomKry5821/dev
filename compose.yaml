@@ -11,7 +11,7 @@ services:
     volumes:
       - ./logs/reservation:/reservation/logs:rw
     networks:
-      - dev-net
+      - dev
 
   notification:
     restart: unless-stopped
@@ -25,7 +25,7 @@ services:
       - ./logs/notification:/notification/logs:rw
       - ./config/notification/templates:/opt/config/templates:ro
     networks:
-      - dev-net
+      - dev
 
   keycloak:
     restart: unless-stopped
@@ -40,7 +40,7 @@ services:
     volumes:
       - ./logs/keycloak:/opt/bitnami/keycloak/data/log:rw
     networks:
-      - dev-net
+      - dev
 
   database:
     restart: unless-stopped
@@ -53,7 +53,7 @@ services:
     volumes:
       - ./db-data:/bitnami/postgresql:rw
     networks:
-      - dev-net
+      - dev
 
   rabbit:
     restart: unless-stopped
@@ -66,7 +66,7 @@ services:
     volumes:
       - ./logs/rabbit:/opt/bitnami/rabbitmq/var/lib/rabbitmq:rw
     networks:
-      - dev-net
+      - dev
 
   proxy:
     restart: unless-stopped
@@ -81,7 +81,7 @@ services:
       - ./config/traefik/certs:/etc/certs:ro
       - ./logs/traefik:/var/log:rw
     networks:
-      - dev-net
+      - dev
 
   cadvisor:
     restart: unless-stopped
@@ -106,7 +106,7 @@ services:
       - "--http_auth_realm=localhost"
       - "--url_base_prefix=/cadvisor"
     networks:
-      - dev-net
+      - dev
 networks:
-  dev-net:
+  dev:
     driver: bridge

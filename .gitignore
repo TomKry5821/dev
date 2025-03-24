@@ -3,6 +3,5 @@ db-data/
 logs/
 config/traefik/certs
 
-*.env
 *.htpasswd
 *.iml

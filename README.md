@@ -1,4 +1,4 @@
-# Dev
+_# Dev
 
 Repozytorium zawiera pliki konfiguracyjna dla środowiska deweloperskiego projektu SERW.
 
@@ -6,30 +6,47 @@ Repozytorium zawiera pliki konfiguracyjna dla środowiska deweloperskiego projek
 
 W ramach przygotowania należy:
 
-1. Wywołać skrypty:
+1. Zainstalowanie wtyczki dla grafana/loki-docker-driver:
 
-```bash
-  bash prepare_directories.sh 
+```sh
+   docker plugin install grafana/loki-docker-driver:3.1.2 --alias loki --grant-all-permissions
 ```
 
-odpowiadający za utworzenie potrzebnych katalogów i nadanie im
-odpowiednich uprawnień.
+2. Dodanie konfiguracji sterowniku w pliku _/etc/docker/deamon.json_:
 
-1. Uzupełnić utworzone pliki .env wartościami potrzebnymi do prawidłowego działania środowiska.
-2. Uruchomić środowisko poleceniem:
+```json
+ {
+  "debug": "true",
+  "log-driver": "loki",
+  "log-opts": {
+    "loki-url": "http://localhost:3100/loki/api/v1/push",
+    "loki-retries": "5",
+    "loki-batch-size": "400"
+  }
+}
+```
+
+3. Restart docker:
+
+```shell
+  sudo systemctl restart docker
+```
+
+4. Uzupełnić utworzone pliki .env wartościami potrzebnymi do prawidłowego działania środowiska.
+5. Uruchomić środowisko poleceniem:
 
 ```bash
   docker compose -p dev up -d
 ``` 
 
-1. Dodać schemat keycloak na bazie danych:
+6. Dodać schemat keycloak na bazie danych:
 
 ```postgresql
 create schema keycloak;
 alter schema keycloak owner to postgres;
 ```
 
-1. Po uruchomieniu Keycloak należy zalogować się na panel admina, utworzyć lub zaimportować realm, utworzyć w dodanym
+7. Po uruchomieniu Keycloak należy zalogować się na panel admina, utworzyć lub zaimportować realm, utworzyć w dodanym
    realm klienta (client) uzupełnić zmienne
    środowiskowe powiązane z Keycloak w pliku env modułu reservation:
     1. JWT_ISSUER_URI - adres URI utworzonego realmu np. http://keycloak:8080/realms/dev dla realmu o nazwie dev,
@@ -46,4 +63,4 @@ Dostępne usługi:
 
 1. Keycloak pod adresem http://localhost:8030
 2. Traefik pod adresem http://localhost:8085/dashboard/#/
-3. cAdvisor pod adresem http://localhost:8084/docker/
+3. Grafana pod adresem http://localhost:3000/

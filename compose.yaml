@@ -111,10 +111,10 @@ services:
     <<: *loki-logging
     depends_on:
       - loki
-    ports:
-      - "3000:3000"
     env_file:
       - ./env/grafana/.env
+    volumes:
+      - ./config/grafana/:/etc/grafana/
     networks:
       - dev
 networks:

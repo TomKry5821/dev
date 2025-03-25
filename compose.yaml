@@ -56,7 +56,7 @@ services:
   database:
     restart: unless-stopped
     container_name: database
-    image: postgres:17.2
+    image: bitnami/postgresql:17.4.0
     ports:
       - "5432:5432"
     mem_limit: 100M
@@ -64,7 +64,7 @@ services:
     env_file:
       - ./env/database/.env
     volumes:
-      - ./db-data:/bitnami/postgresql:rw
+      - db-data:/bitnami/postgresql
     networks:
       - dev
 
@@ -115,8 +115,12 @@ services:
       - ./env/grafana/.env
     volumes:
       - ./config/grafana/:/etc/grafana/
+      - grafana-data:/var/lib/grafana
     networks:
       - dev
 networks:
   dev:
     driver: bridge
+volumes:
+  grafana-data:
+  db-data:

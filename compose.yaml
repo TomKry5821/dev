@@ -94,6 +94,26 @@ services:
     networks:
       - dev
 
+  prometheus:
+    <<: *loki-logging
+    image: bitnami/prometheus:2.55.1
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml:ro
+    networks:
+      - dev
+
+  postgres-exporter:
+    <<: *loki-logging
+    image: bitnami/postgres-exporter:0.17.1
+    container_name: postgres-exporter
+    restart: unless-stopped
+    env_file:
+      - ./env/postgres-exporter/.env
+    networks:
+      - dev
+
   loki:
     image: grafana/loki:latest
     container_name: loki

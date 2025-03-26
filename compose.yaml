@@ -7,60 +7,57 @@ x-loki-logging: &loki-logging
 
 services:
   reservation:
-    restart: unless-stopped
+    <<: *loki-logging
+    image: tk582186/reservation:latest
+    container_name: reservation
     depends_on:
       - database
       - rabbit
-    image: tk582186/reservation:latest
-    container_name: reservation
+    restart: unless-stopped
     mem_limit: 500M
-    <<: *loki-logging
     env_file:
       - ./env/reservation/.env
-    volumes:
-      - ./logs/reservation:/reservation/logs:rw
     networks:
       - dev
 
   notification:
-    restart: unless-stopped
-    depends_on:
-      - rabbit
+    <<: *loki-logging
     image: tk582186/notification:latest
     container_name: notification
+    depends_on:
+      - rabbit
+    restart: unless-stopped
     mem_limit: 250M
-    <<: *loki-logging
     env_file:
       - ./env/notification/.env
     volumes:
-      - ./logs/notification:/notification/logs:rw
       - ./config/notification/templates:/opt/config/templates:ro
     networks:
       - dev
 
   keycloak:
-    restart: unless-stopped
+    <<: *loki-logging
+    image: bitnami/keycloak:26.1.0
+    container_name: keycloak
     depends_on:
       - database
-    container_name: keycloak
-    image: bitnami/keycloak:26.1.0
+    restart: unless-stopped
+    mem_limit: 500M
     ports:
       - '8030:8080'
-    mem_limit: 500M
-    <<: *loki-logging
     env_file:
       - ./env/keycloak/.env
     networks:
       - dev
 
   database:
-    restart: unless-stopped
-    container_name: database
+    <<: *loki-logging
     image: bitnami/postgresql:17.4.0
+    container_name: database
+    restart: unless-stopped
+    mem_limit: 100M
     ports:
       - "5432:5432"
-    mem_limit: 100M
-    <<: *loki-logging
     env_file:
       - ./env/database/.env
     volumes:
@@ -69,24 +66,24 @@ services:
       - dev
 
   rabbit:
-    restart: unless-stopped
-    container_name: rabbit
+    <<: *loki-logging
     image: bitnami/rabbitmq:4.0.6
+    container_name: rabbit
+    restart: unless-stopped
+    mem_limit: 200M
     ports:
       - "15672:15672"
-    mem_limit: 200M
-    <<: *loki-logging
     env_file:
       - ./env/rabbit/.env
     networks:
       - dev
 
   proxy:
-    restart: unless-stopped
+    <<: *loki-logging
     image: traefik:v3.3.2
     container_name: proxy
+    restart: unless-stopped
     mem_limit: 100M
-    <<: *loki-logging
     ports:
       - "443:443"
     volumes:
@@ -100,15 +97,17 @@ services:
   loki:
     image: grafana/loki:latest
     container_name: loki
+    restart: unless-stopped
     ports:
       - "3100:3100"
     networks:
       - dev
 
   grafana:
+    <<: *loki-logging
     image: grafana/grafana:latest
     container_name: grafana
-    <<: *loki-logging
+    restart: unless-stopped
     depends_on:
       - loki
     env_file:
@@ -118,9 +117,11 @@ services:
       - grafana-data:/var/lib/grafana
     networks:
       - dev
+
 networks:
   dev:
     driver: bridge
+
 volumes:
   grafana-data:
   db-data:

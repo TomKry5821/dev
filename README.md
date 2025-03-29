@@ -1,4 +1,4 @@
-_# Dev
+# Dev
 
 Repozytorium zawiera pliki konfiguracyjna dla środowiska deweloperskiego projektu SERW.
 
@@ -12,7 +12,7 @@ W ramach przygotowania należy:
    docker plugin install grafana/loki-docker-driver:3.1.2 --alias loki --grant-all-permissions
 ```
 
-2. Dodanie konfiguracji sterowniku w pliku _/etc/docker/deamon.json_:
+2. Dodanie konfiguracji sterownika w pliku _/etc/docker/deamon.json_:
 
 ```json
  {
@@ -32,14 +32,15 @@ W ramach przygotowania należy:
   sudo systemctl restart docker
 ```
 
-4. Uzupełnić utworzone pliki .env wartościami potrzebnymi do prawidłowego działania środowiska.
+4. Uzupełnienie plików .env wartościami potrzebnymi do prawidłowego działania środowiska.
 5. Uruchomić środowisko poleceniem:
 
 ```bash
   docker compose -p dev up -d
 ``` 
 
-6. Dodać schemat keycloak na bazie danych:
+6. Dodać schemat keycloak na bazie danych (lub uzupełnić właściwość w pliku .env nazwą schematu, który już istnieje w
+   danej bazie):
 
 ```postgresql
 create schema keycloak;
@@ -62,5 +63,16 @@ Po wykonaniu wszystkich kroków środowisko będzie gotowe do pracy.
 Dostępne usługi:
 
 1. Keycloak pod adresem http://localhost:8030
-2. Traefik pod adresem http://localhost:8085/dashboard/#/
-3. Grafana pod adresem http://localhost:3000/
+2. Traefik pod adresem https://localhost/dashboard/#/
+3. Grafana pod adresem https://localhost/grafana/
+
+## Dodanie pulpitów w Grafanie
+
+Aby móc monitorować działanie środowiska z poziomu Grafany należy w serwisie grafany:
+
+1. Dodać źródło danych Loki, przy dodawaniu należy uzupełnić parametr **URL** w zakładce **Connection** wartością *
+   *http://loki:3100**.
+2. Dodać źródło danych prometheus, przy dodawaniu należy uzupełnić parametr **URL** w zakładce **Connection** wartością
+   **http://prometheus:9090**.
+3. Zaimportować szablonu w postaci plików json z katalogu [dashboards](config/grafana/dashboards) - należy zwrócić uwagę
+   na wybranie odpowiednich źródeł danych, które będą wykorzystywane w pulpitach.
